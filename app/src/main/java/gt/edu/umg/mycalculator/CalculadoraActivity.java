@@ -1,35 +1,25 @@
 package gt.edu.umg.mycalculator;
-
-import static android.os.Build.VERSION_CODES.S;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import java.util.function.Function;
 
-import gt.edu.umg.mycalculator.Metodos.Impropias.LogicaImpropias;
-import gt.edu.umg.mycalculator.Metodos.Impropias.UserImpropias;
+
 
 public class CalculadoraActivity extends AppCompatActivity {
-    private TextView txtPantalla;
-    private LinearLayout layoutIntegralImpropia;
     private EditText txtLimiteInferior;
     private EditText txtLimiteSuperior;
     private EditText txtDivisiones;
-
+    private EditText txtResultado;
     @Override
     protected void onCreate(Bundle savedIntanceState) {
         super.onCreate(savedIntanceState);
@@ -71,11 +61,10 @@ public class CalculadoraActivity extends AppCompatActivity {
         Button btnFlecha = findViewById(R.id.btnFlecha);
         Button btnDX = findViewById(R.id.btnDx);
         Spinner spinnerIntegrales = findViewById(R.id.spinner_integrales);
-        layoutIntegralImpropia = findViewById(R.id.layoutIntegralImpropia);
-        layoutIntegralImpropia = findViewById(R.id.layoutIntegralImpropia);
         txtLimiteInferior = findViewById(R.id.txtLimiteInferior);
         txtLimiteSuperior = findViewById(R.id.txtLimiteSuperior);
         txtDivisiones = findViewById(R.id.txtDivisiones);
+        txtResultado = findViewById(R.id.txtResultado);
 
 
 
@@ -177,21 +166,21 @@ public class CalculadoraActivity extends AppCompatActivity {
         });
 
 
-            btnIgual.setOnClickListener(v -> {
-                String seleccion = spinnerIntegrales.getSelectedItem().toString();
-                String expresion = txtPantalla.getText().toString();
+        btnIgual.setOnClickListener(v -> {
+            String seleccion = spinnerIntegrales.getSelectedItem().toString();
+            String expresion = txtDivisiones.getText().toString();
 
-                // Si no se ha seleccionado un método específico, realizar cálculo normal
-                if (seleccion.equals("Seleccione un método")) {
-                    try {
-                        double resultado = Calculadora.evaluar(expresion);
-                        txtPantalla.setText(String.valueOf(resultado));
-                    } catch (Exception e) {
-                        Toast.makeText(CalculadoraActivity.this,
-                                "Error en la expresión", Toast.LENGTH_SHORT).show();
-                    }
-                    return;
+            // Si no se ha seleccionado un método específico, realizar cálculo normal
+            if (seleccion.equals("Seleccione un método")) {
+                try {
+                    double resultado = Calculadora.evaluar(expresion);
+                    txtDivisiones.setText(String.valueOf(resultado));
+                } catch (Exception e) {
+                    Toast.makeText(CalculadoraActivity.this,
+                            "Error en la expresión", Toast.LENGTH_SHORT).show();
                 }
+                return;
+            }
 
 
             switch (seleccion) {
@@ -213,52 +202,64 @@ public class CalculadoraActivity extends AppCompatActivity {
                     break;
 
                 case "Integrales impropias":
-                    // Crear un diálogo personalizado para ingresar los datos
                     try {
-                        String funcion = txtPantalla.getText().toString();
+                        String funcion = txtDivisiones.getText().toString();
                         String limInfStr = txtLimiteInferior.getText().toString();
                         String limSupStr = txtLimiteSuperior.getText().toString();
-                        String divisionesStr = txtDivisiones.getText().toString();
 
-                        if (funcion.isEmpty() || limInfStr.isEmpty() || limSupStr.isEmpty() || divisionesStr.isEmpty()) {
+                        // Usaremos un número fijo de divisiones para la precisión
+                        int divisiones = 1000; // Valor predeterminado para precisión
+
+                        if (funcion.isEmpty() || limInfStr.isEmpty() || limSupStr.isEmpty()) {
                             Toast.makeText(this, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        // Convertir límites a double, manejando "infinito" y "-infinito"
+                        // Convertir límites a double, manejando infinito
                         double limiteInferior;
                         double limiteSuperior;
-                        int divisiones;
 
                         // Procesar límite inferior
                         if (limInfStr.equals("-∞") || limInfStr.equalsIgnoreCase("-infinito")) {
-                            limiteInferior = Double.NEGATIVE_INFINITY;
+                            limiteInferior = -1000000; // Aproximación de infinito negativo
                         } else {
                             limiteInferior = Double.parseDouble(limInfStr);
                         }
 
                         // Procesar límite superior
                         if (limSupStr.equals("∞") || limSupStr.equalsIgnoreCase("infinito")) {
-                            limiteSuperior = Double.POSITIVE_INFINITY;
+                            limiteSuperior = 1000000; // Aproximación de infinito positivo
                         } else {
                             limiteSuperior = Double.parseDouble(limSupStr);
                         }
 
-                        divisiones = Integer.parseInt(divisionesStr);
-                        if (divisiones <= 0) {
-                            Toast.makeText(this, "El número de divisiones debe ser mayor a 0", Toast.LENGTH_SHORT).show();
-                            return;
+                        // Calcular la integral usando el método del trapecio
+                        double h = (limiteSuperior - limiteInferior) / divisiones;
+                        double suma = 0.0;
+
+                        for (int i = 0; i <= divisiones; i++) {
+                            double x = limiteInferior + i * h;
+
+                            // Evaluar la función usando exp4j
+                            Expression e = new ExpressionBuilder(funcion)
+                                    .variables("x", "y")
+                                    .build()
+                                    .setVariable("x", x)
+                                    .setVariable("y", 0); // y se mantiene en 0 por defecto
+
+                            double valor = e.evaluate();
+
+                            if (i == 0 || i == divisiones) {
+                                suma += valor / 2;
+                            } else {
+                                suma += valor;
+                            }
                         }
 
-                        // Obtener la función a integrar
-                        Function<Double, Double> funcionIntegral = parsearFuncion(funcion);
+                        double resultado = suma * h;
 
-                        // Calcular la integral
-                        double resultado = LogicaImpropias.calcularIntegralImpropia(
-                                funcionIntegral, limiteInferior, limiteSuperior, divisiones);
-
-                        // Mostrar el resultado
-                        txtPantalla.setText(String.format("%.6f", resultado));
+                        // Mostrar el resultado en txtResultado
+                        txtResultado.setText(String.format("%.6f", resultado));
 
                     } catch (NumberFormatException e) {
                         Toast.makeText(this, "Error en el formato de los números", Toast.LENGTH_SHORT).show();
@@ -336,6 +337,35 @@ public class CalculadoraActivity extends AppCompatActivity {
             }
         };
     }
+
+    private double calcularIntegralImpropia(Function<Double[], Double> funcion, double limiteInferior, double limiteSuperior, int divisiones) {
+        double h = (limiteSuperior - limiteInferior) / divisiones;
+        double suma = 0.0;
+
+        for (int i = 0; i < divisiones; i++) {
+            double x = limiteInferior + i * h;
+            double y = 0; // Puedes modificar esto según necesites
+            suma += funcion.apply(new Double[]{x, y}) * h;
+        }
+
+        return suma;
+    }
+
+    private double evaluarExpresion(String expression, double x, double y) {
+        try {
+            // Crear la expresión usando ExpressionBuilder de exp4j
+            Expression e = new ExpressionBuilder(expression)
+                    .variables("x", "y") // Define las variables
+                    .build()
+                    .setVariable("x", x) // Asigna el valor de x
+                    .setVariable("y", y); // Asigna el valor de y
+
+            return e.evaluate();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error al evaluar la expresión: " + e.getMessage());
+        }
+    }
+
 
     private static class Calculadora {
 

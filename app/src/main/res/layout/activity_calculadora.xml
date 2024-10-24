@@ -20,16 +20,7 @@
         android:padding="8dp"
         android:visibility="visible">
 
-        <!-- TextViews y EditTexts con IDs que coincidan con el código Java -->
-        <TextView
-            android:id="@+id/tvLimiteInferior"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Límite inferior"
-            android:textColor="#E3E7D3"
-            android:textSize="14sp" />
-
+        <!-- EditTexts existentes -->
         <EditText
             android:id="@+id/txtLimiteInferior"
             android:layout_width="match_parent"
@@ -41,15 +32,6 @@
             android:textColor="#E3E7D3"
             android:textColorHint="#80E3E7D3"
             android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/tvLimiteSuperior"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Límite superior"
-            android:textColor="#E3E7D3"
-            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/txtLimiteSuperior"
@@ -63,15 +45,6 @@
             android:textColorHint="#80E3E7D3"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/tvDivisiones"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Número de divisiones"
-            android:textColor="#E3E7D3"
-            android:textSize="14sp" />
-
         <EditText
             android:id="@+id/txtDivisiones"
             android:layout_width="match_parent"
@@ -79,11 +52,27 @@
             android:layout_marginTop="2dp"
             android:background="#297373"
             android:hint="Ejemplo: 1000"
-            android:inputType="number"
             android:padding="8dp"
             android:textColor="#E3E7D3"
             android:textColorHint="#80E3E7D3"
             android:textSize="16sp" />
+
+        <!-- Nuevo EditText para mostrar el resultado -->
+        <EditText
+            android:id="@+id/txtResultado"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:background="#297373"
+            android:hint="Resultado"
+            android:padding="8dp"
+            android:focusable="false"
+            android:clickable="false"
+            android:textColor="#E3E7D3"
+            android:textColorHint="#80E3E7D3"
+            android:textSize="16sp"
+            android:gravity="center" />
+
     </LinearLayout>
 
 
