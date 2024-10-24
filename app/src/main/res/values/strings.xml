@@ -4,4 +4,23 @@
     <string name="TextView2">HOLA MUNDO DE CREDITOS</string>
     <string name="btnCredit">Creditos</string>
     <string name="btnCalculadora">Calculadora</string>
+
+    <string-array name="spinner_integrales">
+        <item>Por Sustitución</item>
+        <item>Por partes</item>
+        <item>Potencias de funciones trigonométricas</item>
+        <item>Sustituciones trigonométricas</item>
+        <item>Integrales impropias</item>
+        <item>Movimiento rectilíneo</item>
+        <item>Área</item>
+        <item>Volúmenes de sólidos: Métodos de rebanadas y de cascarones</item>
+        <item>Área de una superficie de revolución</item>
+        <item>Valor promedio de una función</item>
+        <item>Centros de masa y Centroides</item>
+        <item>Límites y continuidad de funciones de varias variables</item>
+        <item>Derivadas parciales y Diferencial total y exacta</item>
+        <item>Regla de Cadena, Diferenciales y Extremos de funciones de dos Variables</item>
+    </string-array>
+
+
 </resources>

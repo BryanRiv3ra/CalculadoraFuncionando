@@ -1,15 +1,35 @@
 package gt.edu.umg.mycalculator;
 
+import static android.os.Build.VERSION_CODES.S;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.function.Function;
+
+import gt.edu.umg.mycalculator.Metodos.Impropias.LogicaImpropias;
+import gt.edu.umg.mycalculator.Metodos.Impropias.UserImpropias;
+
 public class CalculadoraActivity extends AppCompatActivity {
+    private TextView txtPantalla;
+    private LinearLayout layoutIntegralImpropia;
+    private EditText txtLimiteInferior;
+    private EditText txtLimiteSuperior;
+    private EditText txtDivisiones;
+
     @Override
     protected void onCreate(Bundle savedIntanceState) {
         super.onCreate(savedIntanceState);
@@ -45,12 +65,19 @@ public class CalculadoraActivity extends AppCompatActivity {
         Button btnResta = findViewById(R.id.btnResta);
         Button btnDivision = findViewById(R.id.btnDivision);
         Button btnRaiz = findViewById(R.id.btnRaiz);
-        TextView txtPantalla = findViewById(R.id.txtPantalla);
         Button btnAC = findViewById(R.id.btnAC);
         Button btnBorrar = findViewById(R.id.btnBorrar);
         Button btnInfinito = findViewById(R.id.btnInfinito);
         Button btnFlecha = findViewById(R.id.btnFlecha);
         Button btnDX = findViewById(R.id.btnDx);
+        Spinner spinnerIntegrales = findViewById(R.id.spinner_integrales);
+        layoutIntegralImpropia = findViewById(R.id.layoutIntegralImpropia);
+        layoutIntegralImpropia = findViewById(R.id.layoutIntegralImpropia);
+        txtLimiteInferior = findViewById(R.id.txtLimiteInferior);
+        txtLimiteSuperior = findViewById(R.id.txtLimiteSuperior);
+        txtDivisiones = findViewById(R.id.txtDivisiones);
+
+
 
         btnRegresarcalcu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,90 +88,259 @@ public class CalculadoraActivity extends AppCompatActivity {
             }
         });
 
-        btn1.setOnClickListener(v -> txtPantalla.append("1"));
-        btn2.setOnClickListener(v -> txtPantalla.append("2"));
-        btn3.setOnClickListener(v -> txtPantalla.append("3"));
-        btn4.setOnClickListener(v -> txtPantalla.append("4"));
-        btn5.setOnClickListener(v -> txtPantalla.append("5"));
-        btn6.setOnClickListener(v -> txtPantalla.append("6"));
-        btn7.setOnClickListener(v -> txtPantalla.append("7"));
-        btn8.setOnClickListener(v -> txtPantalla.append("8"));
-        btn9.setOnClickListener(v -> txtPantalla.append("9"));
-        btn0.setOnClickListener(v -> txtPantalla.append("0"));
-        btnPunto.setOnClickListener(v -> txtPantalla.append("."));
+        btn1.setOnClickListener(v -> txtDivisiones.append("1"));
+        btn2.setOnClickListener(v -> txtDivisiones.append("2"));
+        btn3.setOnClickListener(v -> txtDivisiones.append("3"));
+        btn4.setOnClickListener(v -> txtDivisiones.append("4"));
+        btn5.setOnClickListener(v -> txtDivisiones.append("5"));
+        btn6.setOnClickListener(v -> txtDivisiones.append("6"));
+        btn7.setOnClickListener(v -> txtDivisiones.append("7"));
+        btn8.setOnClickListener(v -> txtDivisiones.append("8"));
+        btn9.setOnClickListener(v -> txtDivisiones.append("9"));
+        btn0.setOnClickListener(v -> txtDivisiones.append("0"));
+        btnPunto.setOnClickListener(v -> txtDivisiones.append(","));
         btnIgual.setOnClickListener(v -> {
-
-
+            // Mantener vacío por ahora
         });
-        btnX.setOnClickListener(v -> txtPantalla.append("X"));
-        btnY.setOnClickListener(v -> txtPantalla.append("Y"));
-        btnElvar.setOnClickListener(v -> txtPantalla.append("^"));
-        btnIntegral.setOnClickListener(v -> txtPantalla.append("∫"));
-        btnParentesis1.setOnClickListener(v -> txtPantalla.append("("));
-        btnParentesis2.setOnClickListener(v -> txtPantalla.append(")"));
-        btnValorAbsoluto.setOnClickListener(v -> txtPantalla.append("|"));
-        btnEuler.setOnClickListener(v -> txtPantalla.append("e"));
-        btnSeno.setOnClickListener(v -> txtPantalla.append("sen"));
-        btnCoseno.setOnClickListener(v -> txtPantalla.append("cos"));
-        btnLogaritmo.setOnClickListener(v -> txtPantalla.append("ln"));
-        btnPi.setOnClickListener(v -> txtPantalla.append("π"));
-        btnMulti.setOnClickListener(v -> txtPantalla.append("*"));
-        btnSuma.setOnClickListener(v -> txtPantalla.append("+"));
-        btnResta.setOnClickListener(v -> txtPantalla.append("-"));
-        btnDivision.setOnClickListener(v -> txtPantalla.append("/"));
-        btnRaiz.setOnClickListener(v -> txtPantalla.append("√"));
-        btnBorrar.setOnClickListener(view -> txtPantalla.append(""));
-        btnFlecha.setOnClickListener(view -> txtPantalla.append("➜"));
-        btnInfinito.setOnClickListener(view -> txtPantalla.append("∞"));
-        btnAC.setOnClickListener(v -> txtPantalla.setText(""));
+        btnX.setOnClickListener(v -> txtDivisiones.append("X"));
+        btnY.setOnClickListener(v -> txtDivisiones.append("Y"));
+        btnElvar.setOnClickListener(v -> txtDivisiones.append("^"));
+        btnIntegral.setOnClickListener(v -> txtDivisiones.append("∫"));
+        btnParentesis1.setOnClickListener(v -> txtDivisiones.append("("));
+        btnParentesis2.setOnClickListener(v -> txtDivisiones.append(")"));
+        btnValorAbsoluto.setOnClickListener(v -> txtDivisiones.append("|"));
+        btnEuler.setOnClickListener(v -> txtDivisiones.append("e"));
+        btnSeno.setOnClickListener(v -> txtDivisiones.append("sen"));
+        btnCoseno.setOnClickListener(v -> txtDivisiones.append("cos"));
+        btnLogaritmo.setOnClickListener(v -> txtDivisiones.append("ln"));
+        btnPi.setOnClickListener(v -> txtDivisiones.append("π"));
+        btnMulti.setOnClickListener(v -> txtDivisiones.append("*"));
+        btnSuma.setOnClickListener(v -> txtDivisiones.append("+"));
+        btnResta.setOnClickListener(v -> txtDivisiones.append("-"));
+        btnDivision.setOnClickListener(v -> txtDivisiones.append("/"));
+        btnRaiz.setOnClickListener(v -> txtDivisiones.append("√"));
+        btnBorrar.setOnClickListener(view -> txtDivisiones.append(""));
+        btnFlecha.setOnClickListener(view -> txtDivisiones.append("➜"));
+        btnInfinito.setOnClickListener(view -> txtDivisiones.append("∞"));
+        btnAC.setOnClickListener(v -> txtDivisiones.setText(""));
 
-        btnIgual.setOnClickListener(v -> {
-            String expresion = txtPantalla.getText().toString();
-            if (!expresion.isEmpty()) {
-                try {
-                    Calculadora.setValorX(1);
-                    Calculadora.setValorY(1);
 
-                    double resultado = Calculadora.evaluar(expresion);
-                    if (Double.isNaN(resultado)) {
-                        Toast.makeText(CalculadoraActivity.this,
-                                "Expresión matemática inválida",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        String resultadoStr;
-                        if (resultado == (long) resultado) {
-                            resultadoStr = String.format("%d", (long) resultado);
-                        } else {
-                            resultadoStr = String.format("%.8f", resultado);
-                        }
-                        txtPantalla.setText(resultadoStr);
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(CalculadoraActivity.this,
-                            "Error en la expresión",
+        btnBorrar.setOnClickListener(view -> {
+            String textoActual = txtDivisiones.getText().toString();
+            if (!textoActual.isEmpty()) {
+                String nuevoTexto = textoActual.substring(0, textoActual.length() - 1);
+                txtDivisiones.setText(nuevoTexto);
+            }
+        });
+
+        String[] opcionesIntegrales = new String[]{
+                "Seleccione un método",  // Opción por defecto
+                "Por Sustitución",
+                "Por partes",
+                "Potencias de funciones trigonométricas",
+                "Sustituciones trigonométricas",
+                "Integrales impropias",
+                "Movimiento rectilíneo",
+                "Área",
+                "Volúmenes de sólidos: Métodos de rebanadas y de cascarones",
+                "Área de una superficie de revolución",
+                "Valor promedio de una función",
+                "Centros de masa y Centroides",
+                "Límites y continuidad de funciones de varias variables",
+                "Derivadas parciales y Diferencial total y exacta",
+                "Regla de Cadena, Diferenciales y Extremos de funciones de dos Variables"
+        };
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,  // Layout para cada item cuando el spinner está cerrado
+                opcionesIntegrales
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerIntegrales.setAdapter(adapter);
+
+        spinnerIntegrales.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) { // Si no es la opción por defecto
+                    String seleccion = parent.getItemAtPosition(position).toString();
+                    Toast.makeText(getApplicationContext(),
+                            "Método seleccionado: " + seleccion,
                             Toast.LENGTH_SHORT).show();
                 }
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Manejar el caso cuando no se selecciona nada
+            }
         });
-        btnBorrar.setOnClickListener(view -> {
-            String textoActual = txtPantalla.getText().toString();
-            if (!textoActual.isEmpty()) {
-                String nuevoTexto = textoActual.substring(0, textoActual.length() - 1);
-                txtPantalla.setText(nuevoTexto);
+
+
+            btnIgual.setOnClickListener(v -> {
+                String seleccion = spinnerIntegrales.getSelectedItem().toString();
+                String expresion = txtPantalla.getText().toString();
+
+                // Si no se ha seleccionado un método específico, realizar cálculo normal
+                if (seleccion.equals("Seleccione un método")) {
+                    try {
+                        double resultado = Calculadora.evaluar(expresion);
+                        txtPantalla.setText(String.valueOf(resultado));
+                    } catch (Exception e) {
+                        Toast.makeText(CalculadoraActivity.this,
+                                "Error en la expresión", Toast.LENGTH_SHORT).show();
+                    }
+                    return;
+                }
+
+
+            switch (seleccion) {
+                case "Por Sustitución":
+                    // Función para resolver integrales por sustitución
+
+                    break;
+
+                case "Por partes":
+                    // Función para resolver integrales por partes
+                    break;
+
+                case "Potencias de funciones trigonométricas":
+                    // Función para resolver integrales de potencias de funciones trigonométricas
+                    break;
+
+                case "Sustituciones trigonométricas":
+                    // Función para resolver integrales con sustituciones trigonométricas
+                    break;
+
+                case "Integrales impropias":
+                    // Crear un diálogo personalizado para ingresar los datos
+                    try {
+                        String funcion = txtPantalla.getText().toString();
+                        String limInfStr = txtLimiteInferior.getText().toString();
+                        String limSupStr = txtLimiteSuperior.getText().toString();
+                        String divisionesStr = txtDivisiones.getText().toString();
+
+                        if (funcion.isEmpty() || limInfStr.isEmpty() || limSupStr.isEmpty() || divisionesStr.isEmpty()) {
+                            Toast.makeText(this, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Convertir límites a double, manejando "infinito" y "-infinito"
+                        double limiteInferior;
+                        double limiteSuperior;
+                        int divisiones;
+
+                        // Procesar límite inferior
+                        if (limInfStr.equals("-∞") || limInfStr.equalsIgnoreCase("-infinito")) {
+                            limiteInferior = Double.NEGATIVE_INFINITY;
+                        } else {
+                            limiteInferior = Double.parseDouble(limInfStr);
+                        }
+
+                        // Procesar límite superior
+                        if (limSupStr.equals("∞") || limSupStr.equalsIgnoreCase("infinito")) {
+                            limiteSuperior = Double.POSITIVE_INFINITY;
+                        } else {
+                            limiteSuperior = Double.parseDouble(limSupStr);
+                        }
+
+                        divisiones = Integer.parseInt(divisionesStr);
+                        if (divisiones <= 0) {
+                            Toast.makeText(this, "El número de divisiones debe ser mayor a 0", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Obtener la función a integrar
+                        Function<Double, Double> funcionIntegral = parsearFuncion(funcion);
+
+                        // Calcular la integral
+                        double resultado = LogicaImpropias.calcularIntegralImpropia(
+                                funcionIntegral, limiteInferior, limiteSuperior, divisiones);
+
+                        // Mostrar el resultado
+                        txtPantalla.setText(String.format("%.6f", resultado));
+
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, "Error en el formato de los números", Toast.LENGTH_SHORT).show();
+                    } catch (IllegalArgumentException e) {
+                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Error en el cálculo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
+                case "Movimiento rectilíneo":
+                    // Función para resolver problemas de movimiento rectilíneo
+
+                    break;
+
+                case "Área":
+                    // Función para calcular el área bajo la curva
+
+                    break;
+
+                case "Volúmenes de sólidos: Métodos de rebanadas y de cascarones":
+                    // Función para calcular volúmenes de sólidos por rebanadas o cascarones
+
+                    break;
+
+                case "Área de una superficie de revolución":
+                    // Función para calcular área de una superficie de revolución
+
+                    break;
+
+                case "Valor promedio de una función":
+                    // Función para calcular el valor promedio de una función
+
+                    break;
+
+                case "Centros de masa y Centroides":
+                    // Función para calcular centros de masa y centroides
+
+                    break;
+
+                case "Límites y continuidad de funciones de varias variables":
+                    // Función para resolver límites y continuidad en funciones de varias variables
+
+                    break;
+
+                case "Derivadas parciales y Diferencial total y exacta":
+                    // Función para resolver derivadas parciales y diferencial total y exacta
+
+                    break;
+
+                case "Regla de Cadena, Diferenciales y Extremos de funciones de dos Variables":
+                    // Función para aplicar la regla de cadena, diferenciales y extremos
+
+                    break;
+
+                default:
+                    // Función por defecto
+
+                    break;
             }
         });
     }
+
+    private Function<Double, Double> parsearFuncion(String expresion) {
+        return x -> {
+            // Reemplazar la variable x en la expresión
+            String expr = expresion.replace("X", x.toString())
+                    .replace("x", x.toString());
+
+            try {
+                // Usar el evaluador existente para calcular el resultado
+                return Calculadora.evaluar(expr);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Error al evaluar la función: " + e.getMessage());
+            }
+        };
+    }
+
     private static class Calculadora {
-        private static double valorX = 0;
-        private static double valorY = 0;
 
-        public static void setValorX(double x) {
-            valorX = x;
-        }
-
-        public static void setValorY(double y) {
-            valorY = y;
-        }
+        public static void setValorX(double x) {}
+        public static void setValorY(double y) {}
 
         public static double evaluar(String expresion) {
             try {
@@ -158,8 +354,8 @@ public class CalculadoraActivity extends AppCompatActivity {
         private static String preprocesarExpresion(String expresion) {
             expresion = expresion.replace(" ", "");
 
-            expresion = expresion.replace("X", String.valueOf(valorX));
-            expresion = expresion.replace("Y", String.valueOf(valorY));
+            expresion = expresion.replace("X", "x");
+            expresion = expresion.replace("Y", "y");
             expresion = expresion.replaceAll("(\\d)\\(", "$1*(");
             expresion = expresion.replaceAll("\\)(\\d)", ")*$1");
             expresion = expresion.replaceAll("\\)\\(", ")*(");

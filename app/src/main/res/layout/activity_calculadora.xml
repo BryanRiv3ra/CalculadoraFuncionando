@@ -10,18 +10,82 @@
     <!-- Section with 2 buttons and a circle -->
 
     <!-- Middle Section (5x2 buttons) -->
-    <TextView
-        android:id="@+id/txtPantalla"
+
+    <LinearLayout
+        android:id="@+id/layoutIntegralImpropia"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:layout_weight="2"
-        android:background="@android:color/white"
-        android:gravity="end|center_vertical"
-        android:padding="16dp"
-        android:textAlignment="textEnd"
-        android:textColor="@color/black"
-        android:textSize="34sp" />
+        android:layout_height="wrap_content"
+        android:background="#1E3D3D"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:visibility="visible">
+
+        <!-- TextViews y EditTexts con IDs que coincidan con el código Java -->
+        <TextView
+            android:id="@+id/tvLimiteInferior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Límite inferior"
+            android:textColor="#E3E7D3"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/txtLimiteInferior"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="2dp"
+            android:background="#297373"
+            android:hint="Ingrese límite inferior"
+            android:padding="8dp"
+            android:textColor="#E3E7D3"
+            android:textColorHint="#80E3E7D3"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvLimiteSuperior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Límite superior"
+            android:textColor="#E3E7D3"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/txtLimiteSuperior"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="2dp"
+            android:background="#297373"
+            android:hint="Ingrese límite superior"
+            android:padding="8dp"
+            android:textColor="#E3E7D3"
+            android:textColorHint="#80E3E7D3"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvDivisiones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Número de divisiones"
+            android:textColor="#E3E7D3"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/txtDivisiones"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="2dp"
+            android:background="#297373"
+            android:hint="Ejemplo: 1000"
+            android:inputType="number"
+            android:padding="8dp"
+            android:textColor="#E3E7D3"
+            android:textColorHint="#80E3E7D3"
+            android:textSize="16sp" />
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,6 +127,11 @@
         android:orientation="vertical">
 
         <!-- Fila 1 -->
+
+        <Spinner
+            android:id="@+id/spinner_integrales"
+            android:layout_width="match_parent"
+            android:layout_height="55dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
